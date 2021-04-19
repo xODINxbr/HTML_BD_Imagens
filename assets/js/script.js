@@ -1,37 +1,63 @@
-// 1. Pegar as imagens
-// a. Utilizar a plataforma do unsplash para pegar as imagens
-
-// 2. Armazenar as imagens
-
-// 3. Exibir as imagens
-// a. Montar o layout
-
-const urlBase = "https://source.unsplash.com/random/";
+//const urlBase = "https://source.unsplash.com/random/";
 const container = document.getElementById(`container`);
 
+const inputPesquisarNumber = document.getElementById(`inputPesquisarNumber`);
+const inputPesquisar = document.getElementById(`inputPesquisar`);
+const btnBuscar = document.getElementById(`btnBuscar`);
 
+btnBuscar.addEventListener("click", recuperarValor);
 
-function pegarImagens (){
+//recupera texto digitado na caixa de pesquisa
+function recuperarValor(){
+    let inputQtdPesquisa = inputPesquisarNumber.value
+    let textoPesquisa = inputPesquisar.value
+    verificaTexto(textoPesquisa, inputQtdPesquisa)
+}
+
+//Trata o texto digitado para verircar se esta em branco ou esta correto
+function verificaTexto(textoPesquisa, inputQtdPesquisa){
+    let qtdNumero = Number(inputQtdPesquisa)
+
+    if(textoPesquisa.trim() !== ""){
+        
+        limpar()
+        pegarImagens(textoPesquisa, qtdNumero)
+
+    }else{
+        console.log("Invalido")
+    }
+}
+
+// PEGAR IMAGENS TRATADAS DA URL
+function pegarImagens (textoPesquisa = "", qtdNumero = 30){
     const imagens = [];
 
-    for(let i = 0; i < 32; i++){
-        const urlImagem = `${urlBase}${gerarNumAleatorio()}x${gerarNumAleatorio()}`; 
+    for(let i = 0; i < qtdNumero; i++){
+        const urlImagem = montarUrl(textoPesquisa)
 
         imagens.push(urlImagem);
     }
     
-    return imagens; //Testar parametro da função gerarNumAleatorio().
+    montarLayout (imagens); //Testar parametro da função gerarNumAleatorio().
 }
 
 pegarImagens (); //Chama a função.
 
-function gerarNumAleatorio(){
-    return Math.floor (Math.random() * 10) + 300 ;
+//Tratamento da URL
+function montarUrl(textoPesquisa = ""){
+    const urlBase = "https://source.unsplash.com/random/";
+    let ulrTratada = `${urlBase}${gerarNumAleatorio()}x${gerarNumAleatorio()}`; 
+
+    if(textoPesquisa !== ""){
+        ulrTratada = `${urlBase}${gerarNumAleatorio()}x${gerarNumAleatorio()}/?${textoPesquisa}`; 
+    }
+
+    return ulrTratada
 }
 
-
-function montarLayout(){
-    const listaImagens = pegarImagens();
+//LISTAR IMAGENS NO TAMPLATE
+function montarLayout(imagens){
+    const listaImagens = imagens
 
     listaImagens.forEach(function(imagem){
         const img = document.createElement(`img`);
@@ -39,4 +65,12 @@ function montarLayout(){
         container.appendChild(img);
     });
 }
-montarLayout();
+
+//GERA TAMANHO DA IMAGEM ALEATÓRIO
+function gerarNumAleatorio(){
+    return Math.floor (Math.random() * 10) + 300 ;
+}
+
+function limpar(){
+    container.innerHTML = ""
+}
